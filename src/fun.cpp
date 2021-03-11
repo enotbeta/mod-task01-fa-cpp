@@ -32,58 +32,73 @@ unsigned int faStr2(const char *str)
 {
     unsigned int result = 0;
     int i = 0;
-    bool is_word = false;
-    bool has_digit = false;
+    bool capital = false;
+    bool problem = false;
     while(str[i] != '\0')
     {
-        if (str[i] == ' ') // if it is the end of a word
+        if(str[i] == ' ')
         {
-            if(is_word && !has_digit)
+            if(capital && !problem)
             {
-                result++; //+ 1 word
-                is_word = false; //restore flag
+                result++;
+            }
+            capital = false;
+            problem = false;
+        }
+        else if(64<str[i] && str[i]<91)
+        {
+            if(capital)
+            {
+                problem = true;
+            }
+            else
+            {
+                capital = true;
             }
         }
-        if(str[i] > 64 && str[i] < 91) // uppercase
+        else if (str[i]<96 || str[i] > 123)
         {
-            if (is_word == true) {has_digit = false;} // double uppercase
-            else {is_word = true;}
-        }
-        if(str[i]< 58 && str[i] > 47) // digit
-        {
-            has_digit = true;
+            problem = true;
         }
         i++;
     }
-    if(is_word && !has_digit) {result++;} // check the last word
+    if (capital && !problem){result++;}
     return result;
 }
 unsigned int faStr3(const char *str)
 {
+    double average = 0.0;
     int i = 0;
-    bool is_word = false;
-    int counter = 0;
-    int sum = -1; //because last char
+    int words = 0;
+    int sum = 0;
+    bool inWord = false;
+
     while(str[i] != '\0')
     {
-        if(is_word == false && str[i] != ' ' )
+        if(!inWord && str[i] != ' ')
         {
-            counter++;
+            inWord = true;
             sum++;
-            is_word = true;
+            words++;
         }
-        if(is_word == true && str[i] != ' ')
+        else if (inWord && str[i] != ' ')
         {
             sum++;
         }
-        if(str[i] == ' ')
+        else
         {
-            is_word = false;
+            inWord = false;
+            average += sum;
+            sum = 0;
         }
         i++;
     }
-    if(counter == 0)
-    {return 0;}
-    double result = sum / counter;
-    return 0;
+    if(inWord)
+        average += sum;
+    average /= words;
+    int r_sum = average;
+    if(average - r_sum >= 0.5)
+       r_sum++;
+
+    return r_sum;
 }
